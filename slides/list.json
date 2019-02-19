@@ -1,7 +1,11 @@
 [
     "index.html",
-    "contexte.html",
-    "transducers.html",
+    "disclaimer.html",
+    "context.html",
+    "theorie.html",
+    "clean-architecture.html",
+    "ddd.html",
+    "cqrs.html",
     "hands-on.html",
     "references.html",
     "merci.html"

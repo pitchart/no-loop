@@ -1,0 +1,57 @@
+<section>
+    <h1>Domain Driven Design</h1>
+</section>
+<section>
+    <img src="resources/img/ddd.png" alt="DDD - The big picture" style="max-height: 70%;">
+</section>
+<section>
+    <h2>Pourquoi ?</h2>
+</section>
+<section>
+    <h3>CRUD vs Réalité</h3>
+    <pre><code>
+class Employee {
+    ...
+}
+    </code></pre>
+</section>
+<section>
+    <h4>CRUD :</h4>
+    <ul>
+        <li>Crée des employés</li>
+        <li>Récupère des employés</li>
+        <li>Mets à jour des employés</li>
+        <li>Supprime des employés</li>
+    </ul>
+</section>
+<section>
+    <h4>Réalité :</h4>
+    <ul>
+        <li>Un employé est embauché</li>
+        <li>Un employé est licencié</li>
+        <li>Un employé part à la retraite</li>
+    </ul>
+</section>
+<section>
+    <h3>Dépendance du contexte d'exécution</h3>
+    <p class="fragment">
+        Web vs API vs CLI ?
+    </p>
+    <p class="fragment">Micorservices => domaine partagé par plusieurs applications isolées</p>
+</section>
+<section>
+    <h4>Maintenabilité</h4>
+    <ul class="fragment">
+        <li>Modification d'une règle de gestion ?</li>
+        <li class="fragment">Introduction de nouvelles fonctionnalités ?</li>
+        <li class="fragment">Adaptation de la stack ?</li>
+    </ul>
+</section>
+<section>
+    <h3>Le développement, c'est <del>compliqué</del> complexe.</h3>
+    <p class="fragment solution">il n'y a pas de solution miracle !</p>
+</section>
+<section>
+    <blockquote>La complexité, c’est comme le cholestérol&nbsp;: il faut surtout se débarasser du mauvais.</blockquote>
+    <p class="fragment solution">Traduire le métier en code indépendant permet de s'abstraire des problématiques liées à un framework</p>
+</section>

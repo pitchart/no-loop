@@ -1,0 +1,65 @@
+<section>
+    <h1>Clean Architecture</h1>
+</section>
+<section>
+    <img src="resources/img/clean-architecture.png" alt="Clean Architecture - The big picture" style="max-height: 70%;">
+</section>
+<section>
+    <h2>Principaux objectifs</h2>
+    <ul>
+        <li>Faire émerger les tests</li>
+        <li>Limiter l'impacte du changement sur le code</li>
+        <li>
+            Indépendance du code
+            <ul class="fragment">
+                <li>Vis à vis de l'interface</li>
+                <li class="fragment">Vis à vis du stockage</li>
+                <li class="fragment">Vis à vis des frameworks</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+<section>
+    <img src="resources/img/oignons.jpg" alt="Shrek" height="300">
+    <blockquote>Comme les oignons ! Ils ont des couches !</blockquote>
+    <ul>
+        <li class="fragment">Les couches externes peuvent utiliser les couches internes</li>
+        <li class="fragment">Les formats de données des couches externes ne sont pas communiqués aux couches internes</li>
+    </ul>
+    <p class="fragment">The dependency rule</p>
+</section>
+<section>
+    <h3>
+        Domain layer <br>
+        (Entreprise business rules)
+    </h3>
+    <ul>
+        <li class="fragment">Entités et règles métier</li>
+        <li class="fragment">Isolée du monde extérieur</li>
+        <li class="fragment">Plus haut niveau d'abstraction</li>
+        <li class="fragment">Réutilisable par d'autres applications (microservices ?)</li>
+    </ul>
+</section>
+<section>
+    <h3>
+        Application layer <br>
+        (Use cases)
+    </h3>
+    <ul>
+        <li class="fragment">Fonctionnements métiers applicatifs</li>
+        <li class="fragment">Orchestration des données depuis et vers le métier</li>
+        <li class="fragment">Cas d'utilisation possibles</li>
+    </ul>
+</section>
+<section>
+    <h3>
+        Infrastructure layer <br>
+        (Interface adapters)
+    </h3>
+    <ul>
+        <li class="fragment">Formats de données entrantes / sortantes</li>
+        <li class="fragment">Requêtes SQL</li>
+        <li class="fragment">Configuration de la persistence</li>
+        <li class="fragment">...</li>
+    </ul>
+</section>

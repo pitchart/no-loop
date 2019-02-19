@@ -1,0 +1,49 @@
+<section>
+    <h1>CQ(R)S</h1>
+</section>
+<section>
+    <h1>Command Query Separation</h1>
+</section>
+<section>
+    <ul>
+        <li><strong>Query :</strong>renvoie un résultat sans modifier l'état du système (lecture)</li>
+        <li class="fragment"><strong>Command :</strong>modifie l'état du système mais ne retourne pas de valeur (écriture)
+            <span class="fragment"> => AKA Modifier / Mutator</span>
+        </li>
+    </ul>
+</section>
+<section>
+    <h1>Command Query Responsibility Segregation</h1>
+</section>
+<section>
+    <img src="resources/img/cqrs.png" alt="CQRS - The big picture" style="max-height: 70%;">
+</section>
+<section>
+    <ul>
+        <li class="fragment">Modèles de lecture et écriture différents (non obligatoire)</li>
+        <li class="fragment"></li>
+    </ul>
+</section>
+<section>
+    <img src="resources/img/jamy.gif" alt="Question">
+    <blockquote>Mais alors Jamy, si une commande ne retourne pas de valeur, comment communique-t-on son résultat ?</blockquote>
+    <p class="fragment warning">La commande ne retourne rien, pas les points d'entrée...</p>
+</section>
+<section>
+    <h3>Erreurs</h3>
+    <ul>
+        <li class="fragment">Validation superficielle déléguée aux couches d'infrastructure (form)</li>
+        <li class="fragment">Exception du domaine</li>
+        <li class="fragment">Evénement détaillant les problèmes de validation</li>
+        <li class="fragment">Code d'erreur HTTP</li>
+        <li class="fragment">Common Result Object (form errors)</li>
+    </ul>
+</section>
+<section>
+    <h3>Succès</h3>
+    <ul>
+        <li class="fragment">Gestion des identifiants <del>depuis la BDD</del> dans le domaine</li>
+        <li class="fragment">CommandBus pour effectuer les écritures</li>
+        <li class="fragment">Utilisation des modèles de lecture pour renvoyer un résultat</li>
+    </ul>
+</section>

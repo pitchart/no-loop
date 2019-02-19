@@ -1,57 +1,126 @@
 <section>
-    <img src="resources/img/packagist.png" alt="">
+    <h2>Et concrètement ?</h2>
+    <h3>Quelques exemples dans Symfony</h3>
 </section>
 <section>
-    <h1>Hands on</h1>
-    <pre><code class="hljs bash">composer install pitchart/transformer</code></pre>
+    <h3>Étape 1 : modéliser le domaine</h3>
+    <h4>DomainBundle</h4>
+    <ul class="fragment">
+        <li>Les tests unitaires sont la seule interface possible pour le moment</li>
+        <li class="fragment">Réduire l'impacte de dépendances externes</li>
+        <li class="fragment">Pas de problématique de formats nécessaires</li>
+    </ul>
+    <p class="fragment solution">Bonus : permet d'obtenir des données valides pour les suites des tests</p>
 </section>
 <section>
-    <pre><code class="hljs php" contenteditable="true">foreach ($users as $user) {
-    if ($user->getAddresses() !== null) {
-        foreach ($user->getAddresses() as $address) {
-            if ($address->isActive()) {
-                $cities[] = new City($address->getZip(), $address->getCity());
-            }
-        }
+    <h4>Pour les entités</h4>
+    <ul class="fragment">
+        <li>Banir les anotations : pas de dépendances réelle <span class="focus">mais</span> dépendances obligatoires en cas d'accès</li>
+        <li class="fragment">Traiter les erreurs de validation sous forme d'exceptions propres au domaine</li>
+        <li class="fragment">Ne pas construire le domaine sous des problématiques de persistance</li>
+        <li class="fragment">Getters ? <del class="fragment">Setters ?</del></li>
+    </ul>
+    <p class="fragment solution">
+        <span class="focus">Property Mapping :</span> Un bon ORM n'a pas besoin de setters <br>
+    </p>
+</section>
+<section>
+    <h4>DDD Repository != ORM Repository</h4>
+    <ul class="fragment">
+        <li class="fragment">Pas de requête orientée SQL (SELECT)</li>
+        <li class="fragment">Possibilité d'être interchangeable (interface uniquement ?)</li>
+    </ul>
+    <pre class="fragment"><code class="hljs php">interface ContactRepository
+{
+    public function newIdentifier(): Identifier;
+    public function add(Contact $contact);
+    public function get(Identifier $identifier): Contact;
+    public function remove(Identifier $identifier);
+}</code></pre>
+</section>
+<section>
+    <h3>Étape 3 : créer les cas d'utilisation</h3>
+    <h4>ApplicationBundle</h4>
+    <p class="fragment"><span class="focus">Command pattern :</span><br> Request => Controller => Form => Command => CommandHandler => Domain <span class="fragment">(=> Event => ...)</span></p>
+    <p class="fragment"><span class="focus">Query pattern :</span><br> Request => Controller => Form => Query => DTO</p>
+</section>
+<section>
+    <h3>CommandHandler ?</h3>
+    <pre><code class="hljs php">interface CommandHandler
+{
+    public function supports(Command $command): bool;
+    public function handle(Command $command) // : void ?;
+}</code></pre>
+</section>
+<section>
+    <h3>Query ?</h3>
+    <pre><code class="hljs php">interface Searcher
+{
+    public function search(ParamFetcher $paramFetcher): iterable;
+    public function count(ParamFetcher $paramFetcher): int;
+}</code></pre>
+</section>
+<section>
+    <pre><code class="hljs php">class ContactSearcher {
+    public function __construct(Filterer $filterer, Specification $specification, Executor $executor, Transformer $transformer) { ... }
+    /** @return ContactListDto[] */
+    public function search(ParamFetcher $paramFetcher) {
+        $query = $this->createQuery();
+        $this->filter($query, $paramFetcher);
+        $this->sort($query, $paramFetcher);
+        $this->paginate($query, $paramFetcher);
+        $results = $this->executor->execute($query);
+        return array_map([$this->transformer, 'transform'], $results);
     }
 }</code></pre>
 </section>
 <section>
-    <pre><code class="hljs php" contenteditable="true">
-$cities = from($users)
-    ->filter(function (User $user) {
-        return count($user->getAddresses()) > 0;
-    })->mapCat(function (User $user) {
-        return $user->getAddresses();
-    })->filter(function (Address $address) {
-        return $address->isActive();
-    })->map(function (Address $address) {
-        return new City($address->getZip(), $address->getCity());
-    })->toArray(); // here is the loop ;)
-    </code></pre>
+    <h3>Specification pattern</h3>
+    <p class="fragment">Spécifications métiers explicitées, applicables à n'importe quel ensemble d'objets</p>
+    <ul class="fragment">
+        <li>Vérifier si un candidat correspond à la spécification</li>
+        <li class="fragment">Filtrer ou requêter un ensemble de candidats</li>
+    </ul>
 </section>
 <section>
-    <pre><code class="hljs php" contenteditable="true">
-$products = from($carts)
-    ->mapCat(function (Cart $cart) {
-        return $cart->getProducts();
-    })->filter(function (Product $product) {
-        return $product->getPrice() > 0;
-    })
-;
-    </code></pre>
-    <pre><code class="hljs php" contenteditable="true">
-$sold = $products
-    ->map(function (Product $product) {
-        return $product->getPrice();
-    })->sum()
-;
-    </code></pre>
-    <pre><code class="hljs php" contenteditable="true">
-$number = $products
-    ->map(function (Product $product) {
-        return $product->getQuantity();
-    })->sum()
-;
-    </code></pre>
+    <h3>Specification pattern</h3>
+    <p>Ex : Un nouvel employé est un employé actif arrivé il y a moins d'un mois</p>
+    <pre><code class="hljs php">$rule = 'active and hiredFrom < 1 month';</code></pre>
+    <div class="fragment"> Mieux :
+        <pre><code class="hljs php">$newEmployeSpecification = new Specification($rule);</code></pre>
+    </div>
+    <div class="fragment"> Mieux ++ :
+        <pre><code class="hljs php">Class NewEmployeSpecification extends Specification {
+    public function getRule() { return 'active and hiredFrom < 1 month'; }
+}</code></pre>
+    </div>
+    <p class="fragment solution"><a href="https://github.com/K-Phoen/rulerz">kphoen/rulerz</a></p>
+</section>
+<section>
+    <h3>Étape 3 : interfacer avec le framework</h3>
+    <h4>InfrastructureBundle</h4>
+    <ul class="fragment">
+        <li>Configuration (persistance, serialisation ...) en limitant les impactes sur le domaine</li>
+        <li class="fragment">Déclaration des services des couches domaine et application (Injection de dépendances)</li>
+        <li class="fragment">Externaliser la configuration ? (vendor/domaine + application/bundle)</li>
+    </ul>
+</section>
+<section>
+    <h4>CRUD ?</h4>
+    <p>Pour les objets simples, avec peu de propriétés, règles ... <br>
+        Ex : catégories, types, tags ...
+    </p>
+    <p class="fragment focus"><a href="http://jlhood.com/there-is-no-u-in-crud/">There is no U in CRUD</a></p>
+</section>
+<section>
+    <h4>Et pour les Aggregats ?</h4>
+    <p class="fragment">Accès aux relations via son agrégat</p>
+    <ul class="fragment">
+        <li>GET /employees/[identifier] => read</li>
+        <li>DELETE /employees/[identifier] => delete</li>
+        <li class="fragment">POST /employees/[identifier] => hire</li>
+        <li class="fragment">PATCH /employees/[identifier]/retire => retire</li>
+        <li class="fragment">PATCH /employees/[identifier]/fire => fire</li>
+        <li class="fragment">GET /employees => <strong class="focus">DTO</strong></li>
+    </ul>
 </section>
